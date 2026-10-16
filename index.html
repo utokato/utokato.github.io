@@ -1,10 +1,67 @@
 <!doctype html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <title>Utokato'Notes</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Utokato'Notes</title>
+<meta name="description" content="Utokato's notes: English vocabulary study plans.">
+<style>
+  /* Local fonts only: DengXian on Windows, PingFang/SF on Apple, JetBrains Mono (OFL) for mono */
+  :root{
+    --body:"DengXian","等线","PingFang SC","SF Pro Text",-apple-system,"Microsoft YaHei",sans-serif;
+    --mono:"JetBrains Mono","SF Mono",ui-monospace,"DengXian",monospace;
+    --ink:#1c2430;--ink-3:#6b7280;--paper:#f4efe6;--seal:#b4372b;--rule:rgba(28,36,48,.14);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;min-height:100vh;font-family:var(--body);color:var(--ink);
+    background:radial-gradient(1200px 600px at 85% -10%,#f9e3cf 0%,transparent 60%),
+               repeating-linear-gradient(0deg,transparent 0 31px,rgba(28,36,48,.035) 31px 32px),var(--paper)}
+  main{max-width:820px;margin:0 auto;padding:72px 22px 56px}
+  .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--seal)}
+  h1{font-size:clamp(34px,7vw,56px);margin:10px 0 8px;letter-spacing:-.02em;line-height:1.1}
+  .lead{color:var(--ink-3);font-size:16px;margin:0 0 36px}
+  .cards{display:grid;gap:14px}
+  a.card{display:grid;grid-template-columns:72px 1fr auto;align-items:center;gap:16px;text-decoration:none;color:inherit;
+    background:rgba(255,255,255,.72);border:1px solid var(--rule);border-radius:16px;padding:18px 20px;
+    box-shadow:0 1px 0 rgba(28,36,48,.04),0 10px 30px -18px rgba(28,36,48,.35);
+    transition:transform .2s ease,border-color .2s ease;opacity:0;animation:rise .5s ease forwards}
+  a.card:nth-child(2){animation-delay:.08s}a.card:nth-child(3){animation-delay:.16s}
+  a.card:hover{transform:translateY(-2px);border-color:var(--seal)}
+  .tag{font-family:var(--mono);font-weight:700;font-size:15px;display:grid;place-items:center;height:56px;border-radius:12px;
+    background:var(--ink);color:#fff}
+  a.card.main .tag{background:var(--seal)}
+  .card b{display:block;font-size:19px;margin-bottom:3px}
+  .card small{color:var(--ink-3);font-size:13.5px;line-height:1.5}
+  .go{font-family:var(--mono);color:var(--ink-3)}
+  footer{margin-top:44px;font-family:var(--mono);font-size:11.5px;color:var(--ink-3)}
+  @keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+  @media (max-width:520px){a.card{grid-template-columns:56px 1fr;padding:16px}.tag{height:48px;font-size:13px}.go{display:none}}
+  @media (prefers-reduced-motion:reduce){a.card{animation:none;opacity:1}}
+</style>
 </head>
 <body>
-<h3>Perhaps something was lost...</h3>
+<main>
+  <div class="eyebrow">Utokato'Notes · English</div>
+  <h1>英语词汇学习计划</h1>
+  <p class="lead">单文件离线网页，进度保存在当前浏览器本地。</p>
+  <nav class="cards">
+    <a class="card main" href="english/oxford-5000.html">
+      <span class="tag">5K</span>
+      <span><b>Oxford 5000 · 30 天计划</b><small>3965 个新词：中英释义、搭配、例句、惯用法、闪卡与测验</small></span>
+      <span class="go">→</span>
+    </a>
+    <a class="card" href="english/index.html">
+      <span class="tag">1K</span>
+      <span><b>1000 个最常用英语单词 · 5 天速通</b><small>每词含释义、例句和惯用语，每课附小片段</small></span>
+      <span class="go">→</span>
+    </a>
+    <a class="card" href="english/phonics.html">
+      <span class="tag">44</span>
+      <span><b>自然拼读入门 · 7 天</b><small>44 个音素、拼读规则与打卡表</small></span>
+      <span class="go">→</span>
+    </a>
+  </nav>
+  <footer>utokato.github.io</footer>
+</main>
 </body>
 </html>
