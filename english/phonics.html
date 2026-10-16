@@ -22,9 +22,10 @@
   --teal-soft:#d6e6e2;
   --gold:#b98a2f;
   --shadow:0 1px 0 rgba(28,36,48,.05), 0 12px 28px -18px rgba(28,36,48,.45);
-  --serif:"DengXian","等线","PingFang SC","SF Pro Display",-apple-system,"Microsoft YaHei",sans-serif;
-  --body:"DengXian","等线","PingFang SC","SF Pro Text",-apple-system,"Microsoft YaHei",sans-serif;
-  --mono:"JetBrains Mono","SF Mono",ui-monospace,"DengXian","PingFang SC",monospace;
+  /* Local fonts only; the switcher injected by scripts/font-switcher.html can override these. */
+  --serif:Cambria,Georgia,"Noto Serif SC","Source Han Serif SC","Songti SC",serif;
+  --body:"Noto Sans SC","Source Han Sans SC","思源黑体","Microsoft YaHei","PingFang SC",sans-serif;
+  --mono:"JetBrains Mono","SF Mono",ui-monospace,"Noto Sans SC","Microsoft YaHei","PingFang SC",monospace;
   --radius:14px;
   --sidebar:284px;
 }
@@ -492,5 +493,91 @@ document.addEventListener("keydown", (e) => {
   if (e.key === "Escape") document.body.classList.remove("nav-open");
 });
 </script>
+<!-- Font switcher -------------------------------------------------------------
+     Every family below is already installed on the reader's machine, so nothing
+     is downloaded and no font file is redistributed with this site:
+       Latin display   Cambria / Georgia (Windows + macOS) and Segoe UI
+       Chinese         Noto Serif SC 思源宋体, Noto Sans SC, 思源黑体,
+                       Microsoft YaHei 微软雅黑, Songti SC, PingFang SC, DengXian 等线
+       Mono            JetBrains Mono (SIL OFL) for IPA, counts and labels
+     Missing families are simply skipped by the browser, so a stack always ends
+     in a safe system fallback. The choice is shared by all pages on this origin
+     through localStorage["en.font"].
+------------------------------------------------------------------------------ -->
+<style>
+.font-pick{appearance:none;-webkit-appearance:none;cursor:pointer;padding-right:26px;
+background-image:linear-gradient(45deg,transparent 50%,currentColor 50%),linear-gradient(135deg,currentColor 50%,transparent 50%);
+background-position:right 12px center,right 7px center;background-size:5px 5px,5px 5px;background-repeat:no-repeat}
+</style>
+<script>
+(function () {
+  var SANS_CJK = '"Noto Sans SC","Source Han Sans SC","思源黑体","Microsoft YaHei","PingFang SC"';
+  var SONG_CJK = '"Noto Serif SC","Source Han Serif SC","Songti SC"';
+  var SERIF_LATIN = "Cambria,Georgia,";
+  var PRESETS = [
+    {id: "song-hei", name: "字体 · 思源宋体标题 + 黑体正文（推荐）",
+     serif: SERIF_LATIN + SONG_CJK + ",serif", body: SANS_CJK + ",sans-serif", cjk: SANS_CJK},
+    {id: "song", name: "字体 · 全宋体（书卷气）",
+     serif: SERIF_LATIN + SONG_CJK + ",serif", body: SERIF_LATIN + SONG_CJK + ",serif", cjk: SONG_CJK},
+    {id: "hei", name: "字体 · 全黑体（现代）",
+     serif: SANS_CJK + ",sans-serif", body: SANS_CJK + ",sans-serif", cjk: SANS_CJK},
+    {id: "yahei", name: "字体 · 微软雅黑",
+     serif: '"Segoe UI","微软雅黑","Microsoft YaHei","PingFang SC",sans-serif',
+     body: '"Segoe UI","微软雅黑","Microsoft YaHei","PingFang SC",sans-serif',
+     cjk: '"微软雅黑","Microsoft YaHei","PingFang SC"'},
+    {id: "deng", name: "字体 · 等线（原版）",
+     serif: '"DengXian","等线","PingFang SC","SF Pro Display",-apple-system,"Microsoft YaHei",sans-serif',
+     body: '"DengXian","等线","PingFang SC","SF Pro Text",-apple-system,"Microsoft YaHei",sans-serif',
+     cjk: '"DengXian","PingFang SC"'}
+  ];
+  var KEY = "en.font";
+
+  function apply(id) {
+    var pick = PRESETS[0];
+    for (var i = 0; i < PRESETS.length; i++) if (PRESETS[i].id === id) pick = PRESETS[i];
+    var root = document.documentElement.style;
+    root.setProperty("--serif", pick.serif);
+    root.setProperty("--body", pick.body);
+    root.setProperty("--mono", '"JetBrains Mono","SF Mono",ui-monospace,' + pick.cjk + ",monospace");
+    return pick.id;
+  }
+
+  // ?font=<id> wins over the stored choice, so a preset can be linked or previewed.
+  var asked = null;
+  try { asked = new URLSearchParams(location.search).get("font"); } catch (e) {}
+  var saved = null;
+  try { saved = localStorage.getItem(KEY); } catch (e) {}
+  var current = apply(asked || saved);
+  if (asked) { try { localStorage.setItem(KEY, current); } catch (e) {} }
+
+  function mount() {
+    var bar = document.querySelector(".topbar");
+    if (!bar || document.getElementById("fontPick")) return;
+    var sel = document.createElement("select");
+    sel.id = "fontPick";
+    sel.className = "chip-btn font-pick";
+    sel.title = "切换界面字体（只使用本机已安装的字体）";
+    sel.setAttribute("aria-label", "界面字体");
+    PRESETS.forEach(function (p) {
+      var opt = document.createElement("option");
+      opt.value = p.id;
+      opt.textContent = p.name;
+      sel.appendChild(opt);
+    });
+    sel.value = current;
+    sel.onchange = function () {
+      current = apply(sel.value);
+      try { localStorage.setItem(KEY, current); } catch (e) {}
+    };
+    bar.appendChild(sel);
+  }
+
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", mount);
+  else mount();
+  // Views are swapped on hashchange in some pages; re-mount if the picker is gone.
+  window.addEventListener("hashchange", function () { setTimeout(mount, 0); });
+})();
+</script>
+
 </body>
 </html>
